@@ -2,6 +2,7 @@
 from sklearn import tree
 from sklearn import naive_bayes
 from sklearn.metrics import accuracy_score
+from sklearn.model_selection import GridSearchCV
 import pickle
 import os
 
@@ -40,7 +41,7 @@ def print_accuracy(predicted, labels):
 
 def get_classifier(classifier_type):
     if classifier_type == 'decision':
-        return tree.DecisionTreeClassifier()
+        return tree.DecisionTreeClassifier(random_state=0)
     elif classifier_type == 'naive':
         return naive_bayes.BernoulliNB()
 
@@ -62,5 +63,19 @@ def run(epochs, classifier_type, training_file, validation_file, results_file, m
             classifier = pickle.load(file)
     for i in range(epochs):
         train(training_file, validation_file, results_file, model_file, classifier)
+    # Example to find best hyperparameters
+    # criterion_options = ['gini', 'entropy']
+    # max_depth_options = [10, 20, 30]
+    # param_grid = dict(criterion=criterion_options, max_depth=max_depth_options)
+    # grid_search(param_grid, classifier, training_file)
+
+
+def grid_search(param_grid, classifier, training_file):
+    features, labels = extract_data('./DataSet/' + training_file)
+    grid = GridSearchCV(classifier, param_grid, cv=10, scoring='accuracy', return_train_score=False)
+    grid.fit(features, labels)
+    print(grid.best_score_)
+    print(grid.best_params_)
+    print(grid.best_estimator_)
 
 
