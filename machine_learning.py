@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 from sklearn import tree
 from sklearn import naive_bayes
+from sklearn import neural_network
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import GridSearchCV
 import pickle
@@ -44,6 +45,8 @@ def get_classifier(classifier_type):
         return tree.DecisionTreeClassifier(random_state=0)
     elif classifier_type == 'naive':
         return naive_bayes.BernoulliNB()
+    elif classifier_type == 'neural':
+        return neural_network.MLPClassifier(random_state=0)
 
 
 def train(training_file, validation_file, results_file, model_file, classifier):
