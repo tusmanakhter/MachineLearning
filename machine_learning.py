@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 from sklearn import tree
+from sklearn import naive_bayes
 from sklearn.metrics import accuracy_score
 import pickle
 import os
@@ -37,6 +38,13 @@ def print_accuracy(predicted, labels):
     print(accuracy)
 
 
+def get_classifier(classifier_type):
+    if classifier_type == 'decision':
+        return tree.DecisionTreeClassifier()
+    elif classifier_type == 'naive':
+        return naive_bayes.BernoulliNB()
+
+
 def train(training_file, validation_file, results_file, model_file, classifier):
     training_features, training_labels = extract_data('./DataSet/' + training_file)
     classifier.fit(training_features, training_labels)
@@ -47,6 +55,12 @@ def train(training_file, validation_file, results_file, model_file, classifier):
     save_model('./Models/' + model_file, classifier)
 
 
-dt_classifier = tree.DecisionTreeClassifier()
-train('ds1/ds1Train.csv', 'ds1/ds1Val.csv', 'ds1/ds1Results-dt.csv', 'ds1/ds1Model-dt.pkl', dt_classifier)
+def run(epochs, classifier_type, training_file, validation_file, results_file, model_file, old_model=None):
+    classifier = get_classifier(classifier_type)
+    if old_model:
+        with open('./Models/' + old_model, 'rb') as file:
+            classifier = pickle.load(file)
+    for i in range(epochs):
+        train(training_file, validation_file, results_file, model_file, classifier)
+
 
